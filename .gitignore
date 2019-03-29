@@ -1,0 +1,60 @@
+# kdiff3 ignore
+*.orig
+
+# maven ignore
+target/
+
+# eclipse ignore
+.settings/
+.project
+.classpath
+
+# idea ignore
+.idea/
+*.ipr
+*.iml
+*.iws
+
+# temp ignore
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+
+# system ignore
+.DS_Store
+Thumbs.db
+
+# package ignore (optional)
+# *.jar
+# *.war
+# *.zip
+# *.tar
+# *.tar.gz
+
+#location
+.metadata
+RemoteSystemsTempFiles
+Servers
+.externalToolBuilders
+out/
+bin/
+.springBeans
+catalina.base_IS_UNDEFINED/
+nohup.out
+
+#android stutio && gradle
+build/
+.gradle/
+local.properties
+
+.externalNativeBuild/
+
+#避免商业竞争问题，各个app破解的插件代码，不公开
+apphook/
+hermes/
+
+# 商业竞争原因，脱壳机不开源
+shell_version3.cpp
+Dumper.java

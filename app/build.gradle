@@ -1,0 +1,82 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+
+    //拦截org.apache.http下面的一些api
+    useLibrary 'org.apache.http.legacy'
+
+    defaultConfig {
+        applicationId "com.virjar.ucrack"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        externalNativeBuild {
+            cmake {
+                // 请注意，目前不支持64位 'x86', 'x86_64', 'arm64-v8a'
+                abiFilters 'armeabi-v7a'
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+//由于我们可能引用snapshot版本的API，此时gradle缓存导致无法加载到最新的依赖，此时可以打开如下注释，这样就不会走缓存
+//configurations.all {
+//    // check for updates every build
+//    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+//}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'com.google.guava:guava:23.4-android'
+    implementation 'com.google.code.findbugs:jsr305:2.0.1'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation 'org.apache.commons:commons-lang3:3.6'
+    testImplementation 'junit:junit:4.12'
+    //最新版本这里可以看到 https://bintray.com/rovo89/de.robv.android.xposed/api
+    compileOnly 'de.robv.android.xposed:api:82'
+    // https://mvnrepository.com/artifact/com.alibaba/fastjson
+    implementation 'com.alibaba:fastjson:1.1.67.android'
+    //    provided files('libs/XposedBridgeApi-54.jar')
+    implementation 'com.github.tony19:apktool-lib:1.4.4-5'
+    //需要移植baksamli，而非直接依赖中央仓库，这是因为爱加密会检查baksmali的存在，存在则闪退
+    //考虑对api的侵入性，我这里不修改baksmali内部代码（仅仅修改包名，防止爱加密检查），对baksmali的功能增强使用反射等hack的方式
+    //见 com.virjar.xposedhooktool.unshell.baksmali.MemoryMethodDexFile
+    //我们使用baksmali反编译dex的能力，但是baksmali是我们需要follow的，这样才能在未来应对加解密库对baksmali本身bug特征的防御突破
+    implementation project(':baksmali')
+    implementation 'com.virjar:hermes-api:1.0.7'
+    implementation 'net.dongliu:apk-parser:2.6.2'
+    //一个简单的http server实现，参考他实现http协议的解码
+    //compile 'org.nanohttpd:nanohttpd:2.3.1'
+    //快手依赖gson
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    //implementation files('src/main/libs/smali-2.2.5.jar')
+}
